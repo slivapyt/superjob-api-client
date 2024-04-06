@@ -4,7 +4,7 @@
 *	Рассматривается вывод списков компаний, вакансий,
 *	а так же вывод вакансий с контактами через OAuth
 *
-*	Для того, чтобы заработал пример, 
+*	Для того, чтобы заработал пример,
 *	поправьте константы CLIENT_ID и CLIENT_SECRET
 **/
 
@@ -12,20 +12,20 @@ header("Content-type: text/html; charset=utf-8");
 
 include_once(dirname(__FILE__).'/../SuperjobAPI.php');
 // ID app
-define("CLIENT_ID", 1); 
+define("CLIENT_ID", 1);
 // Secret key
 define("CLIENT_SECRET", "change_your_secret_code_here");
 
 
-try 
+try
 {
 	$API = new SuperjobAPI(); //можно и так: SuperjobAPI::instance();
 	$API->setSecretKey(CLIENT_SECRET);
 	$clients = $API->clients(array('keyword' => 'Газпром', 'page' => 2, 'count' => 5));
 	$vacancies = $API->vacancies(array('keyword' => 'php', 'town' => 4, 'page' => 1, 'count' => 5));
-	
+
 	$redirect_uri = "http://{$_SERVER['HTTP_HOST']}{$_SERVER['SCRIPT_NAME']}?access=1#oauth";
-	
+
 	if (!empty($_REQUEST['contacts']))
 	{
 		$API->redirectToAuthorizePage(CLIENT_ID,
@@ -37,14 +37,14 @@ try
 
 		$access_token = $token_info['access_token'];
 		$API->setAccessToken($access_token);
-		
+
 		// Под кем зашёл пользователь?
 		$user = $API->current_user();
 
 		$vacancies_with_contacts = $API->vacancies(
 					array(
 						'keyword' => 'php',
-						'count' => 10, 
+						'count' => 10,
 						't' => array(12, 13)
 					)
 				);
@@ -111,22 +111,22 @@ if (!empty($vacancies))
 <p><a href="?contacts=1">Посмотреть</a></p>
 
 <?
-	
+
 if (!empty($error))
 {
 	echo '<br><p><span style="color: #f00; font-weight: bold;">Ошибка: '.$error.'</span></p>';
 
-}	
-	
+}
+
 if (!empty($user))
 {
 	echo '<table cellpadding=4 cellspacing=4>';
-	
+
 	// Информация о текущем пользователе
 	echo '<tr><td><p>Вы вошли как <b>'.$user['name'].'</b></td>';
 	echo '<td>'.((!empty($user['photo']) ? '<img src="'.$user['photo'].'" border=0><br>' : '')).'</td></tr>';
-	
-	
+
+
 	foreach ($vacancies_with_contacts['objects'] as $v)
 	{
 		echo '<tr><td>
@@ -136,8 +136,8 @@ if (!empty($user))
 			'</div>
 			</td>
 			<td>'.
-			((!empty($v['client_logo'])) 
-				? '<img src="'.$v['client_logo'].'" border=0><br>' 
+			((!empty($v['client_logo']))
+				? '<img src="'.$v['client_logo'].'" border=0><br>'
 				: '').'
 			</td></tr>';
 	}
